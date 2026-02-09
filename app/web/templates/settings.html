@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Настройки профиля</h2>
+
+<div class="settings-card">
+
+    <label>Имя пользователя</label>
+    <input id="username" type="text" value="{{ user.username }}">
+
+    <label>Email</label>
+    <input id="email" type="text" value="{{ user.email }}" disabled>
+
+    <button class="btn" onclick="saveSettings()">Сохранить</button>
+
+</div>
+
+<script>
+function saveSettings() {
+    fetch("/api/v1/user/update", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            username: document.getElementById("username").value
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        alert("Сохранено");
+        location.reload();
+    });
+}
+</script>
+
+<style>
+.settings-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-card input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+</style>
+
+{% endblock %}
