@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Пополнение монет</h2>
+
+<div class="coins-container">
+
+    <div class="coins-card">
+        <h3>100 монет</h3>
+        <p>Для небольших покупок.</p>
+        <p class="price">Цена: 1$</p>
+        <button class="btn" onclick="buyCoins(100)">Купить</button>
+    </div>
+
+    <div class="coins-card">
+        <h3>300 монет</h3>
+        <p>Оптимальный набор.</p>
+        <p class="price">Цена: 3$</p>
+        <button class="btn" onclick="buyCoins(300)">Купить</button>
+    </div>
+
+    <div class="coins-card">
+        <h3>700 монет</h3>
+        <p>Экономия 15%.</p>
+        <p class="price">Цена: 6$</p>
+        <button class="btn" onclick="buyCoins(700)">Купить</button>
+    </div>
+
+    <div class="coins-card">
+        <h3>1500 монет</h3>
+        <p>Максимальная выгода.</p>
+        <p class="price">Цена: 12$</p>
+        <button class="btn" onclick="buyCoins(1500)">Купить</button>
+    </div>
+
+</div>
+
+<script>
+function buyCoins(amount) {
+    fetch("/api/v1/coins/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({amount})
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert("Монеты успешно добавлены");
+            window.location.href = "/profile";
+        }
+    });
+}
+</script>
+
+<style>
+.coins-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.coins-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+</style>
+
+{% endblock %}
