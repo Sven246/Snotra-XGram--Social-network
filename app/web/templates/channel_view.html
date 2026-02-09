@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ channel.title }}</h2>
+<p>{{ channel.description }}</p>
+
+<button class="btn" onclick="subscribe()">Подписаться</button>
+
+<hr>
+
+<h3>Посты</h3>
+<div id="posts"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch(`/api/v1/channels/{{ channel.id }}/posts`)
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("posts");
+
+            data.forEach(p => {
+                if (p.is_ad) {
+                    box.innerHTML += `
+                        <div class="ad-block">
+                            <h3>${p.title}</h3>
+                            ${p.image_url ? `<img src="${p.image_url}" class="ad-img">` : ""}
+                            <a class="btn" href="${p.link}" target="_blank">Перейти</a>
+                        </div>
+                    `;
+                } else {
+                    box.innerHTML += `
+                        <div class="post">
+                            <p>${p.content}</p>
+                            <a class="btn" href="/channels/{{ channel.id }}/post/${p.id}">Открыть</a>
+                        </div>
+                    `;
+                }
+            });
+        });
+});
+
+function subscribe() {
+    fetch("/api/v1/channels/subscribe", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({channel_id: {{ channel.id }}})
+    })
+    .then(r => r.json())
+    .then(() => alert("Подписка оформлена"));
+}
+</script>
+{% endblock %}
