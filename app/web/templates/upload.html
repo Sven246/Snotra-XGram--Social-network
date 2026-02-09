@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Загрузка файла</h2>
+
+<div class="form-card">
+    <input id="file" type="file">
+
+    <button class="btn" onclick="uploadFile()">Загрузить</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+function uploadFile() {
+    const fileInput = document.getElementById("file");
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    fetch("/api/v1/files/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("result").innerHTML = `
+            <p>Файл загружен:</p>
+            <a href="${data.url}" target="_blank">${data.url}</a>
+        `;
+    });
+}
+</script>
+
+<style>
+.form-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+</style>
+
+{% endblock %}
