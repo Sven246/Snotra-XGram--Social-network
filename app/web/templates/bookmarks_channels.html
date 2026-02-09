@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Сохранённые каналы</h2>
+
+<div id="channels"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/bookmarks/channels")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("channels");
+
+            data.forEach(ch => {
+                box.innerHTML += `
+                    <div class="channel">
+                        <h3>${ch.title}</h3>
+                        <p>${ch.description}</p>
+                        <a class="btn" href="/channels/${ch.id}">Открыть</a>
+                    </div>
+                `;
+            });
+        });
+});
+</script>
+
+{% endblock %}
