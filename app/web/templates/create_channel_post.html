@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Создать пост в канале</h2>
+
+<div class="form-card">
+    <label>Текст поста</label>
+    <textarea id="content"></textarea>
+
+    <label>URL медиа (необязательно)</label>
+    <input id="media_url" type="text">
+
+    <button class="btn" onclick="createPost()">Опубликовать</button>
+</div>
+
+<script>
+function createPost() {
+    fetch("/api/v1/channels/post/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            channel_id: {{ channel.id }},
+            content: document.getElementById("content").value,
+            media_url: document.getElementById("media_url").value
+        })
+    })
+    .then(r => r.json())
+    .then(() => {
+        alert("Пост опубликован");
+        window.location.href = "/channels/{{ channel.id }}";
+    });
+}
+</script>
+
+<style>
+.form-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+</style>
+
+{% endblock %}
