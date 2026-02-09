@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Двухфакторная авторизация</h2>
+
+{% if user.is_2fa_enabled %}
+    <p class="premium-active">2FA включена</p>
+    <button class="btn" onclick="disable2FA()">Отключить</button>
+{% else %}
+    <p class="premium-inactive">2FA выключена</p>
+    <button class="btn" onclick="enable2FA()">Включить</button>
+{% endif %}
+
+<script>
+function enable2FA() {
+    fetch("/api/v1/security/2fa/enable", { method: "POST" })
+        .then(() => location.reload());
+}
+
+function disable2FA() {
+    fetch("/api/v1/security/2fa/disable", { method: "POST" })
+        .then(() => location.reload());
+}
+</script>
+
+{% endblock %}
