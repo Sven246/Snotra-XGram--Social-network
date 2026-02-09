@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Активные сессии</h2>
+
+<div id="sessions"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/security/sessions")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("sessions");
+
+            data.forEach(s => {
+                box.innerHTML += `
+                    <div class="post">
+                        <p><strong>Устройство:</strong> ${s.device}</p>
+                        <p><strong>IP:</strong> ${s.ip}</p>
+                        <p><strong>Последняя активность:</strong> ${s.last_active}</p>
+                        <button class="btn" onclick="logoutSession('${s.session_id}')">Завершить</button>
+                    </div>
+                `;
+            });
+        });
+});
+
+function logoutSession(id) {
+    fetch("/api/v1/security/logout_session", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ session_id: id })
+    })
+    .then(() => location.reload());
+}
+</script>
+
+{% endblock %}
