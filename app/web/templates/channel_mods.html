@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Модераторы канала</h2>
+
+<div id="mods"></div>
+
+<h3>Добавить модератора</h3>
+<div class="form-card">
+    <input id="user_id" type="number" placeholder="ID пользователя">
+    <button class="btn" onclick="addMod()">Добавить</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/channels/{{ channel.id }}/mods")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("mods");
+
+            data.forEach(m => {
+                box.innerHTML += `
+                    <div class="channel">
+                        <p>Пользователь: ${m.user_id}</p>
+                        <button class="btn" onclick="removeMod(${m.id})">Удалить</button>
+                    </div>
+                `;
+            });
+        });
+});
+
+function addMod() {
+    fetch("/api/v1/channels/mods/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            channel_id: {{ channel.id }},
+            user_id: document.getElementById("user_id").value
+        })
+    })
+    .then(() => location.reload());
+}
+
+function removeMod(id) {
+    fetch("/api/v1/channels/mods/remove", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id})
+    })
+    .then(() => location.reload());
+}
+</script>
+
+{% endblock %}
