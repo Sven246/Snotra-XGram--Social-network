@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Редактировать канал</h2>
+
+<div class="form-card">
+    <label>Название</label>
+    <input id="title" type="text" value="{{ channel.title }}">
+
+    <label>Описание</label>
+    <textarea id="description">{{ channel.description }}</textarea>
+
+    <label>Тип</label>
+    <select id="type">
+        <option value="public" {% if channel.type == "public" %}selected{% endif %}>Публичный</option>
+        <option value="private" {% if channel.type == "private" %}selected{% endif %}>Приватный</option>
+        <option value="premium" {% if channel.type == "premium" %}selected{% endif %}>Премиум</option>
+    </select>
+
+    <button class="btn" onclick="save()">Сохранить</button>
+</div>
+
+<script>
+function save() {
+    fetch("/api/v1/channels/update", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            channel_id: {{ channel.id }},
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            type: document.getElementById("type").value
+        })
+    })
+    .then(() => {
+        alert("Сохранено");
+        window.location.href = "/channels/{{ channel.id }}";
+    });
+}
+</script>
+
+{% endblock %}
