@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Поиск</h2>
+
+<div class="form-card">
+    <input id="query" type="text" placeholder="Введите запрос">
+    <button class="btn" onclick="search()">Искать</button>
+</div>
+
+<div id="results"></div>
+
+<script>
+function search() {
+    const q = document.getElementById("query").value;
+
+    fetch(`/api/v1/search?q=${encodeURIComponent(q)}`)
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("results");
+            box.innerHTML = "";
+
+            data.forEach(item => {
+                box.innerHTML += `
+                    <div class="post">
+                        <p><strong>${item.type}</strong>: ${item.text}</p>
+                    </div>
