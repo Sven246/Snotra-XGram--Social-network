@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Редактировать пост</h2>
+
+<div class="form-card">
+    <label>Текст</label>
+    <textarea id="content">{{ post.content }}</textarea>
+
+    <label>URL медиа</label>
+    <input id="media_url" type="text" value="{{ post.media_url }}">
+
+    <button class="btn" onclick="save()">Сохранить</button>
+</div>
+
+<script>
+function save() {
+    fetch("/api/v1/channels/post/update", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            post_id: {{ post.id }},
+            content: document.getElementById("content").value,
+            media_url: document.getElementById("media_url").value
+        })
+    })
+    .then(() => {
+        alert("Сохранено");
+        window.location.href = "/channels/{{ post.channel_id }}/post/{{ post.id }}";
+    });
+}
+</script>
+
+{% endblock %}
