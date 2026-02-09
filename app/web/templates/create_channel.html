@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Создать канал</h2>
+
+<div class="form-card">
+    <label>Название канала</label>
+    <input id="title" type="text">
+
+    <label>Описание</label>
+    <textarea id="description"></textarea>
+
+    <label>Тип</label>
+    <select id="type">
+        <option value="public">Публичный</option>
+        <option value="private">Приватный</option>
+        <option value="premium">Премиум</option>
+    </select>
+
+    <button class="btn" onclick="createChannel()">Создать</button>
+</div>
+
+<script>
+function createChannel() {
+    fetch("/api/v1/channels/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            type: document.getElementById("type").value
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        alert("Канал создан");
+        window.location.href = "/channels";
+    });
+}
+</script>
+
+<style>
+.form-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-card input,
+.form-card textarea,
+.form-card select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+</style>
+
+{% endblock %}
