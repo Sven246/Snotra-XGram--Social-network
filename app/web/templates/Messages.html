@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Сообщения</h2>
+
+<div id="dialogs"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/messages/dialogs")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("dialogs");
+
+            data.forEach(d => {
+                box.innerHTML += `
+                    <div class="channel">
+                        <p><strong>${d.username}</strong></p>
+                        <a class="btn" href="/messages/${d.user_id}">Открыть</a>
+                    </div>
+                `;
+            });
+        });
+});
+</script>
+
+{% endblock %}
