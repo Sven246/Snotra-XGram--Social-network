@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Сохранённые сообщения</h2>
+
+<div id="messages"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/bookmarks/messages")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("messages");
+
+            data.forEach(m => {
+                box.innerHTML += `
+                    <div class="post">
+                        <p>${m.text}</p>
+                        <small>${m.created_at}</small>
+                        <a class="btn" href="/messages/${m.from_user_id}">Открыть диалог</a>
+                    </div>
+                `;
+            });
+        });
+});
+</script>
+
+{% endblock %}
