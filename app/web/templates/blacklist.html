@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Чёрный список</h2>
+
+<div id="blocked"></div>
+
+<h3>Заблокировать пользователя</h3>
+
+<div class="form-card">
+    <input id="user_id" type="number" placeholder="ID пользователя">
+    <button class="btn" onclick="blockUser()">Заблокировать</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/v1/blacklist/list")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("blocked");
+
+            data.forEach(u => {
+                box.innerHTML += `
+                    <div class="post">
+                        <p>Пользователь: ${u.user_id}</p>
+                        <button class="btn" onclick="unblockUser(${u.user_id})">Разблокировать</button>
+                    </div>
+                `;
+            });
+        });
+});
+
+function blockUser() {
+    fetch("/api/v1/blacklist/block", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            user_id: document.getElementById("user_id").value
+        })
+    })
+    .then(() => location.reload());
+}
+
+function unblockUser(id) {
+    fetch("/api/v1/blacklist/unblock", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: id })
+    })
+    .then(() => location.reload());
+}
+</script>
+
+<style>
+.form-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+</style>
+
+{% endblock %}
