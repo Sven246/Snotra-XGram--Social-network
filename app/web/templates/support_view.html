@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ ticket.title }}</h2>
+<p><strong>Статус:</strong> {{ ticket.status }}</p>
+
+<hr>
+
+<h3>Сообщения</h3>
+<div id="messages" class="messages-box"></div>
+
+<hr>
+
+<div class="form-card">
+    <textarea id="text" placeholder="Ваш ответ"></textarea>
+    <button class="btn" onclick="send()">Отправить</button>
+</div>
+
+<script>
+function load() {
+    fetch("/api/v1/support/messages?ticket_id={{ ticket.id }}")
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("messages");
+            box.innerHTML = "";
+
+            data.forEach(m => {
+                box.innerHTML += `
+                    <div class="post">
+                        <p>${m.text}</p>
+                        <small>${m.created_at}</small>
+                    </div>
+                `;
+            });
+        });
+}
+
+function send() {
+    fetch("/api/v1/support/send", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ticket_id: {{ ticket.id }},
+            text: document.getElementById("text").value
+        })
+    })
+    .then(() => {
+        document.getElementById("text").value = "";
+        load();
+    });
+}
+
+document.addEventListener("DOMContentLoaded", load);
+</script>
+
+<style>
+.messages-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+</style>
+
+{% endblock %}
