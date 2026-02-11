@@ -1,0 +1,7 @@
+import os
+
+DEBUG = False
+SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+SECRET_KEY = os.environ.get("SECRET_KEY")
+SESSION_COOKIE_SECURE = True
+PREFERRED_URL_SCHEME = "https"
